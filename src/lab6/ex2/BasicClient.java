@@ -24,6 +24,9 @@ public class BasicClient {
                 out.println(message);
                 out.flush();
                 if(message.equals("exit")) {
+                    out.close();
+                    in.close();
+                    socket.close();
                     break;
                 }
                 String response = in.readLine();
