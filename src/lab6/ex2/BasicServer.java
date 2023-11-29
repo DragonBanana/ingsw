@@ -14,19 +14,29 @@ public class BasicServer {
             ServerSocket serverSocket = new ServerSocket(12345);
             while(true) {
                 Socket clientSocket = serverSocket.accept();
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream())
-                );
-                String inputLine;
-                while((inputLine = in.readLine()) != null) {
-                    System.out.println("Received from client : " + inputLine);
-                    if(inputLine.equals("exit")) {
-                        break;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
+                            BufferedReader in = new BufferedReader(
+                                    new InputStreamReader(clientSocket.getInputStream())
+                            );
+                            String inputLine;
+                            while ((inputLine = in.readLine()) != null) {
+                                System.out.println("Received from client : " + inputLine);
+                                if (inputLine.equals("exit")) {
+                                    break;
+                                }
+                                out.println("parrot server says: " + inputLine);
+                                out.flush();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                    out.println("parrot server says: " + inputLine);
-                    out.flush();
-                }
+                }).start();
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
